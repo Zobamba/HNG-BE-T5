@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
+import fs from 'fs';
 
 const app = express();
 
@@ -52,5 +53,17 @@ app.get('/:filename', (req, res) => {
   })
 });
 
+// Get all video filenames
+app.get('/videos/uploads', async (req, res) => {
+  const files = await fs.promises.readdir('./public/uploads');
+
+  const videos = files.map((file) => ({
+    localFileUrl: `http://localhost:5000/uploads/${file}`,
+    hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${file}`,
+    filename: file
+  }));
+
+  res.json(videos);
+});
 
 app.listen(port, () => console.log(`index app listening on port ${port}!`));
