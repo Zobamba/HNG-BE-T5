@@ -43,7 +43,8 @@ app.get('/:filename', (req, res) => {
   const filename = req.params.filename;
 
   res.status(200).json({
-    fileUrl: `http://localhost:5000/uploads/${filename}`,
+    localFileUrl: `http://localhost:5000/uploads/${filename}`,
+    hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${filename}`,
     message: "Here is your video"
   })
 });
