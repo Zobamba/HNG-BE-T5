@@ -1,20 +1,11 @@
 import express from 'express';
 import multer from 'multer';
-import fs from 'fs';
-import cors from 'cors';
 
 const app = express();
 
 app.use(express.static('public'));
 
 const port = 5000;
-
-const corsOptions = {
-  origin: ['http://localhost:3000'],
-  credentials: true,
-};
-app.use(cors(corsOptions));
-
 
 // Multer Configuration
 const storage = multer.diskStorage({
