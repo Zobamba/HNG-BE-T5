@@ -30,7 +30,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
-  res.status(201).json({ message: 'File uploaded successfully', filename: req.file.filename, fileUrl: `http://localhost:5000/uploads/${req.file.filename}` });
+  res.status(201).json({
+    message: 'File uploaded successfully',
+    filename: req.file.filename,
+    localFileUrl: `http://localhost:5000/uploads/${req.file.filename}`,
+    hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${req.file.filename}`
+  });
 });
 
 // Get video route
