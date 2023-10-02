@@ -57,7 +57,10 @@ Response Body
 {
  "message": "File uploaded successfully",
   "filename": "1696117532721-movie.mp4",
-  "fileUrl": "http://localhost:5000/uploads/1696117532721-movie.mp4"
+  "fileUrl": "http://localhost:5000/uploads/1696117532721-movie.mp4",
+  "transcript": {
+    ....
+  }
 }
 ```
 
