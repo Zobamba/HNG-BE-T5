@@ -2,6 +2,39 @@ import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
 import fs from 'fs';
+import { execSync as exec } from 'child_process';
+import pkg from '@deepgram/sdk';
+import ffmpegStatic from 'ffmpeg-static';
+
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const { Deepgram } = pkg;
+
+const deepgram = new Deepgram('3b246d055952f0dba6ef9b3485b5767e27bd42d0')
+
+async function ffmpeg(command) {
+  return new Promise((resolve, reject) => {
+    exec(`${ffmpegStatic} ${command}`, (err, stderr, stdout) => {
+      if (err) reject(err)
+      resolve(stdout)
+    })
+  })
+}
+
+async function transcribeLocalVideo(filePath) {
+  ffmpeg(`-hide_banner -y -i ${filePath} ${filePath}.wav`)
+
+  const audioFile = {
+    buffer: fs.readFileSync(`${filePath}.wav`),
+    mimetype: 'audio/wav',
+  }
+  const response = await deepgram.transcription.preRecorded(audioFile, {
+    punctuation: true,
+  })
+  return response.results
+}
 
 const app = express();
 
@@ -40,6 +73,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
     localFileUrl: `http://localhost:5000/uploads/${req.file.filename}`,
     hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${req.file.filename}`
   });
+
+  transcribeLocalVideo(`public/uploads/${req.file.filename}`).then((transcript) =>
+  console.dir(transcript, { depth: null })
+).catch((error) => {
+  console.log(error);
+})
 });
 
 // Get video route
