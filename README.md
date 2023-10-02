@@ -35,7 +35,7 @@ You need node installed and running on your computer.
  # Standard formats for requests and responses for each endpoint
 
 ### POST /upload
-// Note that transcribing may take up to 2mins to get response.
+##### Note that transcribing may take between 30secs to 1minute to get response.
 
 Use this to post a video
 
