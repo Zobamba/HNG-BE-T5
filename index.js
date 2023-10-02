@@ -6,14 +6,10 @@ import { execSync as exec } from 'child_process';
 import pkg from '@deepgram/sdk';
 import ffmpegStatic from 'ffmpeg-static';
 
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 const { Deepgram } = pkg;
-
 const deepgram = new Deepgram('3b246d055952f0dba6ef9b3485b5767e27bd42d0')
 
+// Running ffmpeg Commands
 async function ffmpeg(command) {
   return new Promise((resolve, reject) => {
     exec(`${ffmpegStatic} ${command}`, (err, stderr, stdout) => {
@@ -23,6 +19,7 @@ async function ffmpeg(command) {
   })
 }
 
+// Transcribing
 async function transcribeLocalVideo(filePath) {
   ffmpeg(`-hide_banner -y -i ${filePath} ${filePath}.wav`)
 
@@ -63,22 +60,21 @@ app.get('/', (req, res) => {
 });
 
 // Upload video route
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
+  // Note that transcribing may take up to 2mins to get response.
+  const transcript = await transcribeLocalVideo(`public/uploads/${req.file.filename}`);
+
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
   res.status(201).json({
-    message: 'File uploaded successfully',
+    message: 'File uploaded and transcribed successfully',
     filename: req.file.filename,
     localFileUrl: `http://localhost:5000/uploads/${req.file.filename}`,
-    hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${req.file.filename}`
-  });
+    hostFileUrl: `https://hng-be-t5.onrender.com/uploads/${req.file.filename}`,
+    transcript: transcript,
 
-  transcribeLocalVideo(`public/uploads/${req.file.filename}`).then((transcript) =>
-  console.dir(transcript, { depth: null })
-).catch((error) => {
-  console.log(error);
-})
+  });
 });
 
 // Get video route
