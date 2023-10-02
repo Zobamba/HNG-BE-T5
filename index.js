@@ -61,7 +61,7 @@ app.get('/', (req, res) => {
 
 // Upload video route
 app.post('/upload', upload.single('file'), async (req, res) => {
-  // Note that transcribing may take up to 2mins to get response.
+  // Note that transcribing may take between 30secs to 1minute to get response.
   const transcript = await transcribeLocalVideo(`public/uploads/${req.file.filename}`);
 
   if (!req.file) {
